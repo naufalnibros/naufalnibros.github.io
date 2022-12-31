@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Nama kantin",
+    "desc": "Desc",
+    "image": "ini url gambar",
+    "menu": [
+      {
+        "title": "Nama makanan",
+        "desc": "Desc",
+        "image": "ini url gambar",
+        "price": "integer"
+      }
+    ]
+  },
+  {
+    "title": "De'Warung",
+    "desc": "Jual aneka minuman warung",
+    "image": "https://steemitimages.com/p/3HaJVvr6qfoEFgBir1jy4DeK1wwhDm7oNHzc1b8roaJY8MKhPYpzHNzZPjbpepiHdyHrfa5fMTq5t1m2jvFSfcDLzYJqbrWMDogzrBg?format=match&mode=fit&width=1280",
+    "menu": [
+      {
+        "title": "Milky",
+        "desc": "Milky",
+        "image": "https://steemitimages.com/p/3HaJVvr6qfoEFgBir1jy4DeK1wwhDm7oNHzc1b8roaJY8MKhPYpzHNzZPjbpepiHdyHrfa5fMTq5t1m2jvFSfcDLzYJqbrWMDogzrBg?format=match&mode=fit&width=1280",
+        "price": 12000
+      }
+    ]
+  }
+]

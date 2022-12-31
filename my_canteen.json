@@ -1,14 +1,92 @@
 [
   {
     "title": "Nama kantin",
-    "desc": "Desc",
-    "image": "ini url gambar",
+    "desc": "Sate, siapa yang tidak suka makan sate? Makanan yang menggunakan tusuk bambu dan menghasilkan bau harum saat dibakar ini adalah makanan kesukaan banyak orang Indonesia",
+    "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-07.jpg",
     "menu": [
       {
         "title": "Nama makanan",
         "desc": "Desc",
-        "image": "ini url gambar",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-01.jpg",
         "price": 12500
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
       }
     ]
   },
@@ -21,6 +99,60 @@
         "title": "Milky",
         "desc": "Milky",
         "image": "https://steemitimages.com/p/3HaJVvr6qfoEFgBir1jy4DeK1wwhDm7oNHzc1b8roaJY8MKhPYpzHNzZPjbpepiHdyHrfa5fMTq5t1m2jvFSfcDLzYJqbrWMDogzrBg?format=match&mode=fit&width=1280",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
+        "price": 43992
+      },
+      {
+        "title": "Sate Kuda jawa",
+        "desc": "Milky",
+        "image": "https://uprint.id/blog/wp-content/uploads/2016/11/makanan-indonesia-05.jpg",
         "price": 43992
       }
     ]

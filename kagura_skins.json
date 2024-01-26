@@ -9,10 +9,24 @@
     },
     {
       "id": 2,
-      "title": "Onmyouji Master",
+      "title": "Flower Season",
       "info": "32,000 Battle Points 32000 or 599 Diamonds 599",
       "bannerUrl": "https://static.wikia.nocookie.net/mobile-legends/images/d/d1/Kagura_%28Flower_Season%29.jpg/revision/latest/scale-to-width-down/1000?cb=20210827085724",
       "posterUrl": "https://static.wikia.nocookie.net/mobile-legends/images/0/00/Hero252-portrait.png/revision/latest?cb=20220525164840"
+    },
+    {
+      "id": 3,
+      "title": "Cherry Witch",
+      "info": "32,000 Battle Points 32000 or 599 Diamonds 599",
+      "bannerUrl": "https://static.wikia.nocookie.net/mobile-legends/images/0/0b/Kagura_%28Cherry_Witch%29.jpg/revision/latest?cb=20180605124626",
+      "posterUrl": "https://static.wikia.nocookie.net/mobile-legends/images/1/18/Hero253-portrait.png/revision/latest?cb=20220525164841"
+    },
+    {
+      "id": 4,
+      "title": "Summer Festival",
+      "info": "Limited-time Event 32,000 Battle Points 32000 or 599 Diamonds 599",
+      "bannerUrl": "https://static.wikia.nocookie.net/mobile-legends/images/a/a4/Kagura_%28Summer_Festival%29.jpg/revision/latest/scale-to-width-down/1000?cb=20220701102121",
+      "posterUrl": "https://static.wikia.nocookie.net/mobile-legends/images/0/0a/Hero254-portrait.png/revision/latest?cb=20220628175959"
     }
   ]
 }

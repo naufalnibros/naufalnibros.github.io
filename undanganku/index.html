@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisah Kwintum & Gian</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['Cormorant Garamond', 'serif'],
+                        'sans': ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        'bg-soft': '#FAFAFA',
+                        'dusty-pink': '#D9A4A4',
+                        'dusty-blue': '#A4B8D9',
+                        'text-mute': '#595959',
+                        'chat-left': '#FFFFFF',
+                        'chat-right': '#F7F3E8', 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFAFA;
+            background-image: linear-gradient(rgba(217, 164, 164, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(217, 164, 164, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .webtoon-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+            min-height: 100vh;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        }
+
+        .bubble-wa {
+            padding: 10px 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            font-size: 14.5px;
+            line-height: 1.5;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .bubble-left {
+            background-color: white;
+            border-radius: 16px 16px 16px 4px;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .bubble-right {
+            background-color: #F7F3E8;
+            border-radius: 16px 16px 4px 16px;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .scroll-indicator {
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        .film-filter {
+            filter: contrast(0.95) saturate(0.85) brightness(1.05);
+        }
+        
+        /* Animasi detak untuk countdown */
+        @keyframes pulse-text {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .animate-pulse-fast {
+            animation: pulse-text 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="font-sans text-text-mute antialiased selection:bg-dusty-pink selection:text-white">
+
+    <div class="webtoon-container relative overflow-hidden">
+        
+        <div class="bg-white/90 backdrop-blur-md text-text-mute text-center py-4 font-bold text-sm tracking-[0.2em] uppercase sticky top-0 z-50 border-b border-gray-100 flex justify-between items-center px-6">
+            <span class="opacity-0"><i class="fas fa-bars"></i></span> 
+            <span class="text-dusty-pink font-sans">Prolog & Perjalanan</span>
+            <i class="fas fa-leaf text-gray-300"></i>
+        </div>
+
+        <div class="relative w-full h-[75vh] flex flex-col justify-center items-center overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cover" class="absolute inset-0 w-full h-full object-cover opacity-40 film-filter">
+            <div class="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white"></div>
+            
+            <div class="relative z-10 text-center px-6" data-aos="fade-up" data-aos-duration="1200">
+                <h1 class="font-serif text-6xl text-dusty-pink mb-1 leading-tight">Kwintum<br><span class="text-4xl text-dusty-blue opacity-50">&</span><br>Gian</h1>
+                <div class="w-12 h-[1px] bg-dusty-pink/50 mx-auto mt-6 mb-4"></div>
+                <p class="font-sans text-xs tracking-widest uppercase text-gray-400 font-bold">Menuju Hari Bahagia</p>
+            </div>
+
+            <div class="absolute bottom-8 flex flex-col items-center text-gray-400 scroll-indicator">
+                <span class="text-[10px] mb-2 uppercase tracking-[0.2em] font-medium">Gulir perlahan</span>
+                <i class="fas fa-angle-down text-lg opacity-50"></i>
+            </div>
+        </div>
+
+        <div class="pb-32 bg-white">
+            
+            <div class="px-8 text-center mt-12 mb-8" data-aos="fade-up">
+                <p class="font-serif text-2xl font-bold text-dusty-pink tracking-wide mb-2">Fase 1: Basa-Basi</p>
+                <p class="text-sm font-sans text-gray-500">Murni via chat, tanpa telepon</p>
+            </div>
+
+            <div class="relative w-[90%] mx-auto h-auto rounded-xl overflow-hidden mb-16 flex flex-col py-16 px-4 border border-gray-100 bg-gray-50 shadow-sm" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Phone" class="absolute inset-0 w-full h-full object-cover film-filter opacity-40">
+                <div class="absolute inset-0 bg-white/50"></div>
+
+                <div class="absolute top-4 left-0 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-r-full text-gray-500 text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+                    November 2025
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Assalaamu'alaikum. Halo, ini Gian ya? 👋 Sori nih tiba-tiba nge-chat. Dapet nomornya dari si Fulan katanya boleh kenalan, hehe. 🙏</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="500">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Wa'alaikumussalam. Eh iya bener, ini siapa ya? Oh dari Fulan... Iya nggak apa-apa, salam kenal juga ya! 😊</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="800">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Sip, salam kenal. Lagi sibuk nggak? Takutnya ganggu jam istirahat atau lagi ada kegiatan. 😅</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-2 max-w-[85%]" data-aos="fade-up" data-aos-delay="1100">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Enggak kok, kebetulan lagi santai aja. Tumben banget si Fulan jadi makcomblang begini, wkwk. 😂</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-8 text-center mt-12 mb-8" data-aos="fade-up">
+                <p class="font-serif text-2xl font-bold text-dusty-pink tracking-wide mb-2">Fase 2: Pertemuan Pertama</p>
+                <p class="text-sm font-sans text-gray-500">Alun-Alun Sidoarjo (Duduk Santai)</p>
+            </div>
+
+            <div class="relative w-[90%] mx-auto h-auto rounded-xl overflow-hidden mb-16 flex flex-col py-16 px-4 border border-gray-100 bg-gray-50 shadow-sm" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Park" class="absolute inset-0 w-full h-full object-cover film-filter opacity-50">
+                <div class="absolute inset-0 bg-white/40"></div>
+
+                <div class="absolute top-4 right-0 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-l-full text-gray-500 text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+                    Januari 2026
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[90%]" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Ternyata Alun-Alun Sidoarjo kalau sore mendung gini enak juga ya buat ngobrol. ☁️ Oh iya, tadi pas di jalan aku denger murottal, terus keinget... kamu ngerasa nggak sih, nyebut huruf 'Ain atau Dhod itu susah-susah gampang? 😅</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-4 max-w-[90%]" data-aos="fade-up" data-aos-delay="500">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Hahaha bener banget! 🤣 Jadi keinget guru ngajiku pas sekolah dulu. Kalau makhraj-nya meleset dikit, langsung disuruh ulang satu halaman. Sampai gemeter benerin posisi lidah. 🙊📖</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[90%]" data-aos="fade-up" data-aos-delay="800">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Wah, ternyata kita punya 'trauma' yang sama ya. 😂 Tapi berkat itu sekarang jadi lebih teliti. Ternyata selain nyambung ngobrol receh, kita seru juga ya bahas tajwid begini pas ketemu langsung. Aku nyaman banget cerita banyak hal sama kamu. 😊</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-2 max-w-[90%]" data-aos="fade-up" data-aos-delay="1100">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Iya ya... aku juga ngerasain hal yang sama. Padahal awalnya cuma nggak sengaja dikenalin, tapi sekarang kayak udah temen diskusi lama. Seneng deh. 😌✨</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-8 text-center mt-12 mb-8" data-aos="fade-up">
+                <p class="font-serif text-2xl font-bold text-dusty-pink tracking-wide mb-2">Fase 3: Masa Cobaan</p>
+                <p class="text-sm font-sans text-gray-500">Saling Menguatkan</p>
+            </div>
+
+            <div class="relative w-[90%] mx-auto h-auto rounded-xl overflow-hidden mb-16 flex flex-col py-16 px-4 border border-gray-100 bg-gray-50 shadow-sm" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rain" class="absolute inset-0 w-full h-full object-cover film-filter opacity-60">
+                <div class="absolute inset-0 bg-white/40"></div>
+
+                <div class="absolute top-4 left-0 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-r-full text-gray-500 text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+                    Juni 2026
+                </div>
+
+                <div class="relative z-10 self-end mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Jujur, hari ini lagi ngerasa berat banget... 🥺 Ada masalah di rumah, ditambah kerjaan lagi numpuk. Kayaknya aku lagi di titik capek banget. ☁️</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-start mb-6 max-w-[85%]" data-aos="fade-up" data-aos-delay="500">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Nggak apa-apa, tumpahin aja semuanya di sini. Kamu nggak perlu nanggung semuanya sendirian. Aku siap dengerin kok. 💪</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-center my-6 w-full max-w-[280px]" data-aos="zoom-in" data-aos-delay="800">
+                    <div class="bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl p-4 shadow-md flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800 font-sans font-bold text-sm">Panggilan Suara</p>
+                                <p class="text-gray-400 font-sans text-xs">02 Juli 2026 • 01:20:15</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-info-circle text-gray-300"></i>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-start mt-2 max-w-[85%]" data-aos="fade-up" data-aos-delay="1100">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Hei, kamu hebat udah bertahan sejauh ini. Cobaan ini cuma cara Allah biar kamu makin kuat. Aku di sini, kita hadapi bareng ya? Jangan ngerasa sendiri, ada aku yang selalu *standby* buat kamu. 🛡️😊</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-8 text-center mt-12 mb-8" data-aos="fade-up">
+                <p class="font-serif text-2xl font-bold text-dusty-pink tracking-wide mb-2">Fase 4: Lamaran</p>
+                <p class="text-sm font-sans text-gray-500">Candaan yang berujung serius</p>
+            </div>
+
+            <div class="relative w-[90%] mx-auto h-auto rounded-xl overflow-hidden mb-16 flex flex-col py-16 px-4 border border-gray-100 bg-gray-50 shadow-sm" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ring" class="absolute inset-0 w-full h-full object-cover film-filter opacity-40">
+                <div class="absolute inset-0 bg-white/60"></div>
+
+                <div class="absolute top-4 right-0 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-l-full text-gray-500 text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+                    November 2026
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Eh, dipikir-pikir capek juga ya tiap minggu ketemu di Alun-Alun terus pulangnya masih harus lanjut lewat chat begini? 😂</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="500">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Hahaha, kenapa emangnya? Kode mau ngurangin jatah ketemu ya? 😜</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="800">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Bukan gitu... maksudnya, gimana kalau capeknya kita pindahin ke satu atap aja? Biar nggak perlu antar jemput lagi. 🏠</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="1100">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Hah? Maksudnya... ini lagi ngajak serius atau gimana nih? Wkwk, jangan bikin kaget! 😳</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="1400">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Bercanda tapi beneran mau serius. Minggu depan aku sama orang tua ke rumahmu ya? Kita tentuin tanggal lamarannya. Gas nggak? 💍🔥</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-2 max-w-[85%]" data-aos="fade-up" data-aos-delay="1700">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Ya ampun... kirain cuma guyon. Kalau niatnya buat ibadah, ya bismillah, gas lah! 🙈❤️</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-8 text-center mt-12 mb-8" data-aos="fade-up">
+                <p class="font-serif text-2xl font-bold text-dusty-pink tracking-wide mb-2">Fase 5: Menuju Hari H</p>
+            </div>
+
+            <div class="relative w-[90%] mx-auto h-auto rounded-xl overflow-hidden mb-16 flex flex-col py-16 px-4 border border-gray-100 bg-gray-50 shadow-sm" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1506784951205-0258275c602d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Calendar" class="absolute inset-0 w-full h-full object-cover film-filter opacity-40">
+                <div class="absolute inset-0 bg-white/50"></div>
+
+                <div class="absolute top-4 left-0 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-r-full text-gray-500 text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+                    Februari 2027
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left">
+                            <p class="text-gray-800 font-sans font-medium">Bismillah ya, mulai besok kita makin disiplin nabungnya buat vendor-vendor itu. Capek dikit gapapa, demi momen sekali seumur hidup kita di Maret nanti. 💸📈</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-2 max-w-[85%]" data-aos="fade-up" data-aos-delay="500">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right">
+                            <p class="text-gray-800 font-sans font-medium">Iya, semangat ya calon imamku! 🤲 Semoga niat baik kita dilancarin terus sampai hari H. Aku bakal dampingin kamu terus dalam proses ini. ❤️</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-8 text-center mt-12 mb-8" data-aos="fade-up">
+                <p class="font-serif text-2xl font-bold text-dusty-pink tracking-wide mb-2">Fase 6: Puncak</p>
+                <p class="text-sm font-sans text-gray-500">Minggu, 21 Maret 2027</p>
+            </div>
+
+            <div class="relative w-[90%] mx-auto h-auto rounded-xl overflow-hidden mb-10 flex flex-col py-16 px-4 border border-gray-100 bg-gray-50 shadow-sm" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Wedding" class="absolute inset-0 w-full h-full object-cover film-filter opacity-50">
+                <div class="absolute inset-0 bg-white/40"></div>
+
+                <div class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full text-gray-500 text-[10px] uppercase tracking-widest font-bold shadow-sm z-10">
+                    06:00 WIB
+                </div>
+
+                <div class="relative z-10 self-start mb-4 max-w-[85%]" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-end gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Kwintum" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bubble-wa bubble-left border border-dusty-pink/30 shadow-md">
+                            <p class="text-gray-800 font-sans font-medium">Deg-degan banget asli, jantung udah kayak mau copot! 💓 Lagi hafalin teksnya terus nih, doain nggak salah sebut namamu ya! 🤵‍♂️</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 self-end mb-2 max-w-[85%]" data-aos="fade-up" data-aos-delay="500">
+                    <div class="flex items-end gap-2 justify-end mb-1">
+                        <div class="bubble-wa bubble-right border border-dusty-pink/30 shadow-md">
+                            <p class="text-gray-800 font-sans font-medium">Bismillah, tenang ya... tarik nafas dalem-dalem. Aku nunggu di balik pintu. Sampai ketemu di momen kita sah di mata Allah. ❤️👰‍♀️✨</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex-shrink-0 overflow-hidden bg-white">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Gian" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cta-section" class="text-center px-8 mt-20 pb-10" data-aos="fade-up" data-aos-offset="50">
+                <div class="w-1 h-12 bg-gray-200 mx-auto mb-8 rounded-full"></div>
+                
+                <p class="font-sans text-gray-500 mb-6 leading-relaxed text-base font-medium">
+                    Cieee udah kepo baca perjalanannya sampai habis! 😆<br>
+                    Siap-siap ya, kamu bakal otomatis otw ke halaman undangan dalam waktu:
+                </p>
+                
+                <div id="countdown-display" class="text-6xl font-serif text-dusty-pink font-bold mb-8 h-16 flex items-center justify-center">
+                    5
+                </div>
+                
+                <p class="text-xs text-gray-400 mb-6">Kelamaan nunggu? Langsung gas aja klik tombol di bawah:</p>
+
+                <a href="undangan.html" class="inline-flex items-center justify-center bg-white text-dusty-pink font-bold font-sans text-sm tracking-widest uppercase py-4 px-10 rounded-full border border-dusty-pink hover:bg-dusty-pink hover:text-white transition-all duration-300 shadow-sm active:scale-95">
+                    Gas Ke Undangan!
+                    <i class="fas fa-arrow-right ml-3"></i>
+                </a>
+
+                <p class="text-[9px] text-gray-300 mt-16 font-sans tracking-[0.2em] uppercase font-bold">Kwintum & Gian © 2027</p>
+            </div>
+            </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        AOS.init({
+            once: true, 
+            duration: 800,
+            easing: 'ease-out-cubic', 
+            offset: 50, 
+        });
+
+        // SCRIPT COUNTDOWN OTOMATIS
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctaSection = document.getElementById('cta-section');
+            const countdownDisplay = document.getElementById('countdown-display');
+            let isCountingDown = false;
+
+            // Kita pakai IntersectionObserver biar deteksinya mulus pas user sampai bawah
+            const observer = new IntersectionObserver((entries) => {
+                const entry = entries[0];
+                
+                // Jika section bawah terlihat dan belum mulai hitung mundur
+                if (entry.isIntersecting && !isCountingDown) {
+                    isCountingDown = true;
+                    let timeLeft = 5;
+                    
+                    // Tambahkan animasi detak
+                    countdownDisplay.classList.add('animate-pulse-fast');
+                    
+                    const timer = setInterval(() => {
+                        timeLeft--;
+                        countdownDisplay.textContent = timeLeft;
+                        
+                        if (timeLeft <= 0) {
+                            clearInterval(timer);
+                            // Otomatis pindah halaman
+                            window.location.href = 'undangan.html';
+                        }
+                    }, 1000);
+                }
+            }, { 
+                threshold: 0.5 // Trigger saat 50% area bawah sudah terlihat di layar
+            });
+
+            if (ctaSection) {
+                observer.observe(ctaSection);
+            }
+        });
+    </script>
+</body>
+</html>

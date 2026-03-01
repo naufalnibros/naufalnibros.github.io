@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Trivia - Naufal & Gian</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['Cormorant Garamond', 'serif'],
+                        'sans': ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        'bg-soft': '#FAFAFA',
+                        'opt-a': '#D9A4A4', /* Dusty Pink */
+                        'opt-b': '#A4B8D9', /* Dusty Blue */
+                        'opt-c': '#C4A76D', /* Gold Javanese */
+                        'opt-d': '#4A3C2A', /* Brown Javanese */
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFAFA;
+            background-image: radial-gradient(rgba(196, 167, 109, 0.15) 2px, transparent 2px);
+            background-size: 20px 20px;
+            overscroll-behavior-y: contain;
+            opacity: 0;
+            animation: fadeInPage 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .game-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #timer-bar {
+            transition: width 1s linear;
+        }
+
+        .option-btn {
+            transition: transform 0.1s, filter 0.2s;
+        }
+        .option-btn:active {
+            transform: scale(0.95);
+            filter: brightness(0.9);
+        }
+
+        .pop-in {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased selection:bg-opt-c selection:text-white">
+
+    <!-- Back Button -->
+    <button id="back-button" onclick="goBackToInvitation()" class="fixed top-6 left-6 z-50 w-12 h-12 bg-white/90 backdrop-blur rounded-full shadow-xl flex items-center justify-center text-opt-d border-2 border-opt-c/30 hover:border-opt-c hover:bg-opt-c/10 transition-all" title="Kembali ke Undangan">
+        <i class="fas fa-arrow-left text-xl"></i>
+    </button>
+
+    <div class="game-container">
+        
+        <div id="screen-lobby" class="flex-1 flex flex-col justify-center items-center p-6 text-center pop-in">
+            <div class="w-20 h-20 bg-opt-c/20 rounded-full flex items-center justify-center text-opt-c text-4xl mb-6 shadow-sm">
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <h1 class="font-serif text-4xl text-opt-d mb-2 font-bold leading-tight">Seberapa Kenal Naufal & Gian?</h1>
+            <p class="text-gray-500 mb-8 text-sm px-4">Jawab 20 pertanyaan secepat mungkin! Pemenang dengan skor tertinggi berhak mengklaim <strong class="text-opt-c">Voucher Dompet Digital & Box Roti Spesial</strong> di meja buku tamu!</p>
+            
+            <div class="w-full max-w-xs">
+                <input type="text" id="player-name" placeholder="Masukkan Nama Kamu..." class="w-full text-center font-bold text-lg p-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-opt-c mb-4 transition-colors">
+                <button onclick="startGame()" class="w-full bg-opt-d text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-opacity-90 transition-all active:scale-95 uppercase tracking-widest">
+                    Mulai Main
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-question" class="hidden flex-1 flex flex-col pop-in">
+            
+            <div class="p-4 flex justify-between items-center bg-white border-b border-gray-100 shadow-sm z-10">
+                <span id="question-counter" class="font-bold text-gray-500 text-sm tracking-widest uppercase">1 / 20</span>
+                <span id="score-display" class="font-bold text-opt-c text-lg bg-opt-c/10 px-4 py-1 rounded-full">0 Pts</span>
+            </div>
+
+            <div class="w-full h-2 bg-gray-100">
+                <div id="timer-bar" class="h-full bg-opt-a w-full"></div>
+            </div>
+
+            <div class="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gray-50">
+                <div id="meme-container" class="hidden w-full max-w-[200px] mb-4 rounded-xl overflow-hidden shadow-md border-4 border-white">
+                    <img id="question-image" src="" alt="Meme" class="w-full h-auto object-cover">
+                </div>
+                
+                <p id="question-category" class="text-xs font-bold text-opt-c tracking-widest uppercase mb-2">Kategori</p>
+                <h2 id="question-text" class="font-sans text-xl md:text-2xl font-bold text-opt-d leading-relaxed">
+                    Pertanyaan akan muncul di sini?
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 p-4 bg-white pb-8">
+                <button onclick="selectAnswer(0)" class="option-btn relative bg-opt-a text-white font-bold text-sm md:text-base p-4 rounded-xl shadow-sm flex items-center justify-start gap-4 border border-transparent min-h-[70px]">
+                    <div class="w-8 h-8 rounded-md bg-white/20 flex items-center justify-center flex-shrink-0"><i class="fas fa-heart"></i></div>
+                    <span id="opt-0-text" class="text-left leading-snug">Opsi A</span>
+                </button>
+                <button onclick="selectAnswer(1)" class="option-btn relative bg-opt-b text-white font-bold text-sm md:text-base p-4 rounded-xl shadow-sm flex items-center justify-start gap-4 border border-transparent min-h-[70px]">
+                    <div class="w-8 h-8 rounded-md bg-white/20 flex items-center justify-center flex-shrink-0"><i class="fas fa-star"></i></div>
+                    <span id="opt-1-text" class="text-left leading-snug">Opsi B</span>
+                </button>
+                <button onclick="selectAnswer(2)" class="option-btn relative bg-opt-c text-white font-bold text-sm md:text-base p-4 rounded-xl shadow-sm flex items-center justify-start gap-4 border border-transparent min-h-[70px]">
+                    <div class="w-8 h-8 rounded-md bg-white/20 flex items-center justify-center flex-shrink-0"><i class="fas fa-circle"></i></div>
+                    <span id="opt-2-text" class="text-left leading-snug">Opsi C</span>
+                </button>
+                <button onclick="selectAnswer(3)" class="option-btn relative bg-opt-d text-white font-bold text-sm md:text-base p-4 rounded-xl shadow-sm flex items-center justify-start gap-4 border border-transparent min-h-[70px]">
+                    <div class="w-8 h-8 rounded-md bg-white/20 flex items-center justify-center flex-shrink-0"><i class="fas fa-square"></i></div>
+                    <span id="opt-3-text" class="text-left leading-snug">Opsi D</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-feedback" class="hidden flex-1 flex flex-col justify-center items-center p-6 text-center text-white transition-colors duration-300">
+            <i id="feedback-icon" class="text-7xl mb-4 drop-shadow-md"></i>
+            <h2 id="feedback-title" class="font-bold text-4xl mb-2 tracking-wide uppercase">Benar!</h2>
+            <div id="feedback-points" class="bg-black/20 backdrop-blur-sm px-6 py-2 rounded-full font-bold text-xl mb-10 shadow-inner">
+                +850 Pts
+            </div>
+            
+            <div class="bg-white/20 p-5 rounded-xl w-full max-w-xs mb-8 shadow-sm">
+                <p class="text-xs uppercase tracking-widest font-bold opacity-80 mb-2">Penjelasan / Fakta:</p>
+                <p id="feedback-fact" class="font-medium text-sm leading-relaxed">Fakta tentang jawaban yang benar.</p>
+            </div>
+
+            <button onclick="nextQuestion()" class="w-full max-w-xs bg-white text-gray-800 font-bold text-lg py-4 rounded-xl shadow-lg active:scale-95 transition-transform uppercase tracking-widest">
+                Lanjut <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        <div id="screen-end" class="hidden flex-1 flex flex-col justify-center items-center p-6 text-center bg-gray-50 pop-in">
+            <img src="https://cdn-icons-png.flaticon.com/512/5406/5406830.png" alt="Trophy" class="w-32 h-32 mb-6 drop-shadow-xl">
+            <h2 class="font-serif text-4xl text-opt-d font-bold mb-2">Permainan Selesai!</h2>
+            <p class="text-gray-500 font-medium mb-6">Luar biasa, <span id="final-name" class="text-opt-c font-bold">Player</span>!</p>
+            
+            <div class="bg-white border-2 border-opt-c rounded-2xl p-6 w-full max-w-xs shadow-lg mb-8 relative">
+                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Total Skor Kamu</p>
+                <p id="final-score" class="font-bold text-5xl text-opt-d">0</p>
+            </div>
+
+            <p class="text-sm text-gray-500 mb-6 px-4">Kirimkan hasil skor ini ke WhatsApp kami. Skor tertinggi di akhir acara akan mendapatkan <strong>Voucher Saldo Dompet Digital & Box Roti Spesial</strong>!</p>
+
+            <button onclick="sendScoreWA()" class="w-full max-w-xs bg-[#25D366] text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-[#128C7E] transition-all active:scale-95 uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+                <i class="fab fa-whatsapp text-2xl"></i> Klaim Hadiah
+            </button>
+
+            <a href="undangan.html" class="text-sm font-bold text-gray-400 hover:text-opt-d uppercase tracking-widest transition-colors mt-4">
+                Kembali ke Undangan
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // ================= DATA PERTANYAAN (20 Soal) =================
+        const questions = [
+            {
+                category: "The Core Lore",
+                question: "Apa chat pembuka Naufal yang bikin si manten perempuan nggak jadi nge-block nomor asing?",
+                options: ["\"P\" (Singkat padat menyebalkan)", "\"Halo dek, boleh kenalan?\"", "\"Assalaamu'alaikum\" (Adab nomor satu!)", "\"Test 1 2 3, koneksi aman?\""],
+                correctAnswer: 2,
+                fact: "Adab nomor satu! Mulai dengan salam itu kunci keberhasilan jalur langit."
+            },
+            {
+                category: "The Core Lore",
+                question: "Manten perempuan lahir tepat pada peringatan hari besar apa di Indonesia?",
+                options: ["Hari Kesaktian Pancasila", "Hari Sumpah Pemuda", "Hari Pahlawan (10 November)", "Hari Ibu (Biar disayang mertua)"],
+                correctAnswer: 2,
+                fact: "Lahir tanggal 10 November 2000, pantesan tangguh bak Pahlawan!"
+            },
+            {
+                category: "The Core Lore",
+                question: "Tempat pertama kali Naufal \"interview\" calon istrinya secara tatap muka adalah...",
+                options: ["Kantor PT. Bimasakti", "Toko Roti Laritta (Lagi beli hantaran)", "Alun-Alun Sidoarjo (Sambil liatin burung merpati)", "Bengkel ganti ban CB150R"],
+                correctAnswer: 2,
+                fact: "Sambil duduk nyantai liatin burung merpati di Alun-Alun Sidoarjo."
+            },
+            {
+                category: "The Core Lore",
+                question: "Siapa yang lebih jago \"ngaji\" soal perasaan sambil diskusi kitab Fathul Qarib?",
+                options: ["Naufal (Si paling muraja'ah)", "Manten Perempuan (Si paling teliti makhraj-nya)", "Dua-duanya (Asal nggak bahas bab warisan dulu)", "Guru ngaji mereka pas SD"],
+                correctAnswer: 2,
+                fact: "Dua-duanya jago, lumayan buat modal bangun rumah tangga!"
+            },
+            {
+                category: "The Core Lore",
+                question: "Kalau manten perempuan lagi pengen makan yang manis-manis di Surabaya, tujuannya ke mana?",
+                options: ["Warung penyetan pinggir jalan", "Laritta Bakery atau Cake Boss (The ultimate choice)", "Kedai jamu pegal linu", "Kantin kantor Naufal"],
+                correctAnswer: 1,
+                fact: "The ultimate choice! Pokoknya antara Laritta atau Cake Boss."
+            },
+            {
+                category: "The Core Lore",
+                question: "Apa \"side effect\" yang pernah bikin manten perempuan kapok pas nyobain gaya hidup sehat?",
+                options: ["Laper tengah malam", "Perut sakit gara-gara serbuk daun kelor", "Jadi pengen lari maraton ke Sidoarjo", "Lupa cara makan gorengan"],
+                correctAnswer: 1,
+                fact: "Gara-gara serbuk daun kelor (moringa), niat sehat malah berujung mules-mules lucu!",
+                // Meme/Foto orang mules
+                image: "https://images.unsplash.com/photo-1618498082410-b4aa22193b38?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+            },
+            {
+                category: "The Core Lore",
+                question: "Motor \"Saksi Bisu\" perjuangan Naufal antar-jemput (sebelum pensiun) adalah...",
+                options: ["NMAX (biar selonjoran)", "Honda CB150R 2016 (Motor kopling pemersatu bangsa)", "Sepeda angin Sidoarjo", "Karpet terbang Aladin"],
+                correctAnswer: 1,
+                fact: "Honda CB150R 2016! Motor kopling andalan yang jadi saksi bisu perjalanan cinta mereka."
+            },
+            {
+                category: "Sidoarjo Pride & Kebangsaan",
+                question: "Sidoarjo terkenal dengan Udang dan Bandeng. Kalau Naufal dan pasangan ibarat apa?",
+                options: ["Kerupuk dan Petis (Saling melengkapi)", "Kabel dan Server (Nggak bisa pisah)", "Udang dan Bandeng (Ikon Sidoarjo Pride)", "Baut dan Mur (Kenceng terus)"],
+                correctAnswer: 0,
+                fact: "Ibarat Kerupuk dan Petis, beda tekstur tapi kalau disatuin rasanya paling mantap!"
+            },
+            {
+                category: "Sidoarjo Pride & Kebangsaan",
+                question: "Berapa selisih umur Manten Laki-laki dan Manten Perempuan (2000)?",
+                options: ["5 Tahun (Beda generasi)", "2 Tahun (Pas buat diajak seru-seruan)", "10 Tahun (Kayak om dan keponakan)", "Seumur jagung"],
+                correctAnswer: 1,
+                fact: "Cuma beda 2 tahun, jadi frekuensinya pas banget buat seru-seruan bareng."
+            },
+            {
+                category: "Sidoarjo Pride & Kebangsaan",
+                question: "Lagu \"Kebangsaan\" mereka kalau lagi galau bareng di motor adalah...",
+                options: ["Indonesia Raya (Sambil hormat)", "Alamat - Rizky Febian & Adrian Khalif (Sering di-repeat)", "Balonku Ada Lima", "Mars PT. Bimasakti"],
+                correctAnswer: 1,
+                fact: "Lagu Alamat dari Rizky Febian & Adrian Khalif emang paling bener buat nemenin masuk angin di motor."
+            },
+            {
+                category: "Sidoarjo Pride & Kebangsaan",
+                question: "Pancasila sila ke-3: Persatuan Indonesia. Apa bukti persatuan Naufal & Pasangan?",
+                options: ["Punya tabungan emas bareng", "Akun Netflix satu profil berdua", "Akad Nikah 21 Maret 2027 (Fixed No Debat!)", "Sering tukaran password HP"],
+                correctAnswer: 2,
+                fact: "Akad Nikah 21 Maret 2027 adalah wujud nyata persatuan dua insan dan dua keluarga!"
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Seorang Application Dev Engineer seperti Naufal paling takut sama apa?",
+                options: ["Hantu di kantor", "Kopi habis", "\"Mas, aplikasinya error di HP saya\"", "Listrik padam pas lagi push rank"],
+                correctAnswer: 2,
+                fact: "Paling panik denger 'Aplikasinya error Mas', padahal kalau dicek di HP Naufal aman jaya!",
+                // Meme Pusing Ngoding
+                image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Apa ketakutan terbesar Manten Perempuan kalau Naufal lagi asyik \"Vibe Coding\"?",
+                options: ["Lupa makan", "Dicuekin chat-nya sampai berjam-jam", "Laptopnya meledak", "Naufal jadi robot"],
+                correctAnswer: 1,
+                fact: "Kalau udah mode Vibe Coding, WA bisa ditinggal berjam-jam. Untung sabar!"
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Harta karun di rumah yang sering bikin calon Ibu-ibu ngamuk kalau hilang?",
+                options: ["Emas batangan", "Sertifikat tanah", "Tupperware (Awas jangan sampe ketinggalan di kantor!)", "Remote TV"],
+                correctAnswer: 2,
+                fact: "Nyawa taruhannya kalau kotak bekal Tupperware sampai hilang di kantor!"
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Indomie paling enak dimakan pas kapan?",
+                options: ["Pas lagi kaya", "Pas hujan & lagi akhir bulan (Ditambah cabe rawit 10)", "Pas lagi sarapan", "Pas lagi nikahan orang (Eits, katering dong!)"],
+                correctAnswer: 1,
+                fact: "Apalagi ditambah cabe rawit 10 biji pas hujan, nikmat tiada tara ala anak kos."
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Manten Laki-laki lahir 1998, Manten Perempuan lahir 2000. Apa kesamaannya?",
+                options: ["Sama-sama nggak kenal kaset pita", "Sama-sama lahir di akhir abad 20", "Sama-sama suka main Toram Online", "Sama-sama bayi pejuang"],
+                correctAnswer: 1,
+                fact: "Sama-sama anak generasi akhir abad 20 yang sebentar lagi bakal sah berumah tangga!"
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Kalau Naufal lagi pusing \"Bug\" melulu, obat paling ampuhnya adalah...",
+                options: ["Minum parasetamol 3x sehari", "Voice note dari doi: \"Semangat sayang, qobiltu sudah dekat\"", "Restart laptop 100 kali", "Mandi air kembang tujuh rupa"],
+                correctAnswer: 1,
+                fact: "Satu notif Voice Note dari si Doi sukses membasmi semua bug di kepala."
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Apa singkatan \"LDR\" menurut mereka berdua?",
+                options: ["Long Distance Relationship", "Lelah Disiksa Rindu", "Lamaran Demi Ridho-Nya", "Liat Dia Rasanya pengen nikah"],
+                correctAnswer: 2,
+                fact: "Daripada pusing LDR beda jarak, lebih baik Lamaran Demi Ridho-Nya!"
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Tamu tak diundang mana yang paling mungkin muncul di Sidoarjo Maret 2027 nanti?",
+                options: ["Presiden", "Mantan (Eh, jangan dong!)", "Ibu-ibu pengincar rendang katering baris depan", "Debt Collector salah alamat"],
+                correctAnswer: 2,
+                fact: "Peringatan Siaga 1: Pasukan rendang harus dijaga dari invasi tas plastik ibu-ibu!"
+            },
+            {
+                category: "Kocak & Out of Context",
+                question: "Setelah \"Qobiltu\" nanti, apa hal pertama yang akan Naufal lakukan?",
+                options: ["Update status LinkedIn: \"Married\"", "Uninstall aplikasi cari jodoh", "Selebrasi: \"Alhamdulillah, Jasa Antar-Jemput Gratisan RESMI TUTUP!\"", "Langsung tidur siang"],
+                correctAnswer: 2,
+                fact: "Target utama tercapai: SAH dan bebas dari rutinitas capek antar-jemput Sidoarjo!"
+            }
+        ];
+
+        // ================= VARIABEL STATE =================
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = "";
+        let timer;
+        let timeLeft;
+        const TIME_LIMIT = 15; // Detik per pertanyaan
+
+        // Elemen DOM
+        const screenLobby = document.getElementById('screen-lobby');
+        const screenQuestion = document.getElementById('screen-question');
+        const screenFeedback = document.getElementById('screen-feedback');
+        const screenEnd = document.getElementById('screen-end');
+        const timerBar = document.getElementById('timer-bar');
+        const memeContainer = document.getElementById('meme-container');
+        const questionImage = document.getElementById('question-image');
+
+        // ================= FUNGSI GAME =================
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if (!nameInput) {
+                alert("Isi nama kamu dulu ya biar bisa klaim hadiah!");
+                return;
+            }
+            playerName = nameInput;
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            hideBackButton();
+            screenLobby.classList.add('hidden');
+            loadQuestion();
+        }
+
+        // Fungsi untuk hide/show back button
+        function hideBackButton() {
+            const backBtn = document.getElementById('back-button');
+            if (!backBtn) return;
+            backBtn.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showBackButton() {
+            const backBtn = document.getElementById('back-button');
+            if (!backBtn) return;
+            backBtn.classList.remove('opacity-0', 'pointer-events-none');
+        }
+        function loadQuestion() {
+            screenFeedback.classList.add('hidden');
+            screenQuestion.classList.remove('hidden');
+            
+            const q = questions[currentQuestionIndex];
+            
+            document.getElementById('question-counter').innerText = `${currentQuestionIndex + 1} / ${questions.length}`;
+            document.getElementById('question-category').innerText = q.category;
+            document.getElementById('score-display').innerText = `${score} Pts`;
+            document.getElementById('question-text').innerText = q.question;
+            
+            // Tampilkan Meme jika ada
+            if (q.image) {
+                questionImage.src = q.image;
+                memeContainer.classList.remove('hidden');
+            } else {
+                memeContainer.classList.add('hidden');
+            }
+            
+            // Load Opsi
+            document.getElementById('opt-0-text').innerText = q.options[0];
+            document.getElementById('opt-1-text').innerText = q.options[1];
+            document.getElementById('opt-2-text').innerText = q.options[2];
+            document.getElementById('opt-3-text').innerText = q.options[3];
+
+            // Reset Timer Bar
+            timerBar.style.transition = 'none';
+            timerBar.style.width = '100%';
+            
+            setTimeout(() => {
+                startTimer();
+            }, 50);
+        }
+
+        function startTimer() {
+            timeLeft = TIME_LIMIT;
+            timerBar.style.transition = `width ${TIME_LIMIT}s linear`;
+            timerBar.style.width = '0%';
+
+            timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    selectAnswer(-1); // Waktu habis
+                }
+            }, 1000);
+        }
+
+        function selectAnswer(selectedIndex) {
+            clearInterval(timer); 
+            
+            const q = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === q.correctAnswer;
+            
+            let pointsEarned = 0;
+            if (isCorrect) {
+                // Poin: minimal 500, + bonus sisa waktu maks 500
+                const timeRatio = timeLeft / TIME_LIMIT;
+                pointsEarned = Math.floor(500 + (500 * timeRatio));
+                score += pointsEarned;
+            }
+
+            showFeedback(isCorrect, pointsEarned, q.fact);
+        }
+
+        function showFeedback(isCorrect, pointsEarned, fact) {
+            screenQuestion.classList.add('hidden');
+            screenFeedback.classList.remove('hidden');
+
+            const icon = document.getElementById('feedback-icon');
+            const title = document.getElementById('feedback-title');
+            const points = document.getElementById('feedback-points');
+            
+            if (isCorrect) {
+                screenFeedback.className = "flex-1 flex flex-col justify-center items-center p-6 text-center text-white bg-[#86A789] pop-in"; // Sage Green
+                icon.className = "fas fa-check-circle text-7xl mb-4 drop-shadow-md";
+                title.innerText = "Benar!";
+                points.innerText = `+${pointsEarned} Pts`;
+                points.classList.remove('hidden');
+            } else {
+                screenFeedback.className = "flex-1 flex flex-col justify-center items-center p-6 text-center text-white bg-[#D9A4A4] pop-in"; // Dusty Pink
+                icon.className = "fas fa-times-circle text-7xl mb-4 drop-shadow-md";
+                title.innerText = timeLeft <= 0 ? "Waktu Habis!" : "Salah!";
+                points.classList.add('hidden');
+            }
+
+            document.getElementById('feedback-fact').innerText = fact;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            screenFeedback.classList.add('hidden');
+            screenEnd.classList.remove('hidden');
+            showBackButton();
+            
+            document.getElementById('final-name').innerText = playerName;
+            
+            // Animasi Skor
+            let currentScore = 0;
+            const scoreDisplay = document.getElementById('final-score');
+            const interval = setInterval(() => {
+                currentScore += 150; 
+                if (currentScore >= score) {
+                    currentScore = score;
+                    clearInterval(interval);
+                }
+                scoreDisplay.innerText = currentScore;
+            }, 30);
+        }
+
+        // ================= KIRIM KE WA =================
+        function sendScoreWA() {
+            const waNumber = "6281234567890"; // GANTI NOMOR WA DISINI
+            const text = `Halo Naufal & Pasangan! 🎮%0A%0ASaya *${playerName}* baru saja menyelesaikan 20 soal Wedding Trivia nih!%0ATotal Skor saya: *${score} Pts*.%0A%0ASiap-siap klaim Voucher Saldo & Box Roti ya! 😂`;
+            window.open(`https://api.whatsapp.com/send?phone=${waNumber}&text=${text}`, '_blank');
+        }
+
+        // ================= SMOOTH NAVIGATION BACK =================
+        function goBackToInvitation() {
+            const body = document.body;
+            body.style.transition = 'opacity 0.5s ease-out';
+            body.style.opacity = '0';
+            
+            setTimeout(() => {
+                window.location.href = 'undangan.html';
+            }, 500);
+        }
+    </script>
+</body>
+</html>

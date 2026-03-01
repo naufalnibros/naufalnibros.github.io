@@ -96,7 +96,17 @@
 </head>
 <body class="font-sans text-text-mute antialiased selection:bg-dusty-pink selection:text-white">
 
+    <!-- Background Music -->
+    <audio id="bg-music" autoplay loop style="display: none;">
+        <source src="cozy.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="webtoon-container relative overflow-hidden">
+        
+        <!-- Music Control Button -->
+        <button id="music-toggle" class="fixed top-4 right-4 z-50 w-10 h-10 bg-dusty-pink/80 backdrop-blur rounded-full flex items-center justify-center text-white shadow-lg hover:bg-dusty-pink transition-all" title="Nyalakan/Matikan Musik">
+            <i class="fas fa-volume-up text-sm"></i>
+        </button>
         
         <div class="bg-white/90 backdrop-blur-md text-text-mute text-center py-4 font-bold text-sm tracking-[0.2em] uppercase sticky top-0 z-50 border-b border-gray-100 flex justify-between items-center px-6">
             <span class="opacity-0"><i class="fas fa-bars"></i></span> 
@@ -488,6 +498,92 @@
             easing: 'ease-out-cubic', 
             offset: 50, 
         });
+
+        // SCRIPT KONTROL MUSIK
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggle = document.getElementById('music-toggle');
+        let isMusicPlaying = false;
+        let isAttemptingToPlay = false; // Mencegah pemanggilan play() bertumpuk
+
+        // Update icon tombol musik
+        function updateMusicButton() {
+            if (!musicToggle) return;
+            const icon = musicToggle.querySelector('i');
+            if (isMusicPlaying) {
+                icon.classList.remove('fa-volume-mute');
+                icon.classList.add('fa-volume-up');
+                musicToggle.title = 'Matikan Musik';
+            } else {
+                icon.classList.remove('fa-volume-up');
+                icon.classList.add('fa-volume-mute');
+                musicToggle.title = 'Nyalakan Musik';
+            }
+        }
+
+        // Fungsi utama untuk menyalakan musik dengan aman
+        const playMusic = async () => {
+            // Kalau udah nyala, atau lagi proses loading play, atau elemen ga ada, skip aja
+            if (isMusicPlaying || isAttemptingToPlay || !bgMusic) return;
+
+            try {
+                isAttemptingToPlay = true;
+                await bgMusic.play(); // Pake async/await biar lebih rapi nangkap promisenya
+                
+                isMusicPlaying = true;
+                updateMusicButton();
+
+                removeUnlockListeners();
+            } catch (err) {
+                isMusicPlaying = false;
+                updateMusicButton();
+            } finally {
+                isAttemptingToPlay = false;
+            }
+        };
+
+        // Daftar event yang kita jadikan "jaring" penangkap interaksi
+        const unlockEvents = ['click', 'touchstart', 'touchend', 'scroll'];
+
+        // Fungsi buat pasang telinga (listener)
+        const setupUnlockListeners = () => {
+            unlockEvents.forEach(evt => {
+                // Kita ga pake passive: true lagi, karena kadang browser ga anggap itu sebagai "User Gesture"
+                document.addEventListener(evt, playMusic);
+            });
+        };
+
+        // Fungsi buat cabut telinga (listener) 
+        const removeUnlockListeners = () => {
+            unlockEvents.forEach(evt => {
+                document.removeEventListener(evt, playMusic);
+            });
+        };
+
+        // 1. Mulai pasang listener pas halaman dimuat
+        setupUnlockListeners();
+
+        // 2. Toggle musik saat tombol ikon musik diklik secara manual
+        if (musicToggle) {
+            musicToggle.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Biar ga bentrok sama jaring event di document
+
+                if (isMusicPlaying) {
+                    bgMusic.pause();
+                    isMusicPlaying = false;
+                    updateMusicButton();
+                } else {
+                    try {
+                        await bgMusic.play();
+                        isMusicPlaying = true;
+                        updateMusicButton();
+                        removeUnlockListeners(); // Kalau dinyalain dari tombol, cabut juga jaringnya
+                    } catch (err) {
+                        console.log('Gagal play dari tombol:', err);
+                    }
+                }
+            });
+        }
 
         // SCRIPT COUNTDOWN OTOMATIS
         document.addEventListener('DOMContentLoaded', () => {

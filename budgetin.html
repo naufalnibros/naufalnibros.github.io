@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgetin (Tanpa Server)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Tambahan Library html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans antialiased">
+
+    <!-- App Container -->
+    <div class="max-w-md mx-auto bg-gray-50 h-[100dvh] shadow-2xl relative flex flex-col overflow-hidden">
+        
+        <!-- Header -->
+        <header class="bg-emerald-600 text-white p-4 shadow-md z-10 shrink-0">
+            <div class="flex justify-between items-center mb-2">
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="ph-fill ph-wallet"></i> Budgetin
+                </h1>
+                <div class="text-xs bg-emerald-700 px-2 py-1 rounded-full flex items-center gap-1 cursor-pointer hover:bg-emerald-800 transition-colors" onclick="resetName()" title="Ganti Nama">
+                    <i class="ph ph-user"></i> <span id="displayUserName">...</span>
+                </div>
+            </div>
+            <div class="flex justify-between items-center bg-emerald-500 rounded-lg p-2 mt-2">
+                <div class="text-sm mr-2 flex-1 text-white">
+                    <span class="opacity-80 text-[10px] block uppercase tracking-wider">Mode Kolaborasi Offline</span>
+                    <div class="flex items-center gap-2">
+                        <strong class="tracking-wider text-sm">Data Lokal P2P</strong>
+                        <button onclick="openImportModal()" class="text-emerald-100 hover:text-white text-xs underline bg-emerald-600/50 px-2 py-0.5 rounded flex items-center gap-1 active:scale-95 transition-transform">
+                            <i class="ph ph-download-simple"></i> Import
+                        </button>
+                    </div>
+                </div>
+                <!-- Action Buttons: PDF & Bagikan Data -->
+                <div class="flex gap-2">
+                    <button onclick="downloadPDF()" class="bg-white text-rose-600 text-xs font-bold px-3 py-2 rounded flex items-center gap-1 active:scale-95 transition-transform shadow-sm" title="Unduh Laporan PDF">
+                        <i class="ph ph-file-pdf"></i> PDF
+                    </button>
+                    <button onclick="copyInviteLink()" class="bg-white text-emerald-600 text-xs font-bold px-3 py-2 rounded flex items-center gap-1 active:scale-95 transition-transform shadow-sm">
+                        <i class="ph ph-share-network"></i> Bagikan
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 pb-24 relative" id="mainContent">
+            <!-- Groups Container -->
+            <div id="groupsContainer" class="space-y-4">
+                <!-- Groups will be injected here by JS -->
+            </div>
+        </main>
+
+        <!-- Floating Total Footer -->
+        <footer class="bg-white border-t border-gray-200 p-4 shrink-0 z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            <div class="flex justify-between items-end mb-2">
+                <span class="text-sm text-gray-500 font-medium">Estimasi Total Keseluruhan</span>
+                <button onclick="clearAllData()" class="text-[10px] text-red-400 hover:text-red-600 underline">Hapus Semua</button>
+            </div>
+            <div class="text-lg font-bold text-emerald-600 flex justify-between items-center bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                <span id="totalMin">Rp 0</span>
+                <span class="text-gray-400 text-sm mx-2"><i class="ph ph-arrow-right"></i></span>
+                <span id="totalMax">Rp 0</span>
+            </div>
+        </footer>
+
+        <!-- Floating Action Button (Add Group) -->
+        <button onclick="openGroupModal()" class="absolute bottom-28 right-4 bg-emerald-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-emerald-700 active:scale-90 transition-transform z-20">
+            <i class="ph ph-folder-plus"></i>
+        </button>
+
+    </div>
+
+    <!-- Modals Overlay Background -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/50 z-40 hidden backdrop-blur-sm transition-opacity"></div>
+
+    <!-- 1. Name Entry Modal -->
+    <div id="nameModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-xl shadow-2xl z-50 p-6 hidden">
+        <div class="text-center mb-4">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 text-3xl">
+                <i class="ph-fill ph-hand-waving"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800">Selamat Datang!</h2>
+            <p class="text-sm text-gray-500 mt-1">Masukkan nama Anda. Aplikasi ini berjalan 100% di browser Anda tanpa server.</p>
+        </div>
+        <input type="text" id="userNameInput" placeholder="Nama Anda (Cth: Budi)" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent mb-4 text-center text-lg">
+        <button onclick="saveName()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 active:bg-emerald-800 transition-colors">
+            Masuk Aplikasi
+        </button>
+    </div>
+
+    <!-- 2. Add Group Modal -->
+    <div id="groupModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-xl shadow-2xl z-50 p-6 hidden">
+        <h2 class="text-lg font-bold text-gray-800 mb-1">Buat Kategori Baru</h2>
+        <p class="text-xs text-gray-500 mb-4">Kelompokkan budget berdasarkan judul (Cth: Penginapan, Makanan)</p>
+        <input type="text" id="groupNameInput" placeholder="Judul Kategori" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-4">
+        <div class="flex gap-2">
+            <button onclick="closeModals()" class="flex-1 bg-gray-100 text-gray-700 font-medium py-2 rounded-lg hover:bg-gray-200">Batal</button>
+            <button onclick="saveGroup()" class="flex-1 bg-emerald-600 text-white font-medium py-2 rounded-lg hover:bg-emerald-700">Simpan</button>
+        </div>
+    </div>
+
+    <!-- 3. Add Item Modal -->
+    <div id="itemModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-xl shadow-2xl z-50 p-6 hidden">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Tambah Item Budget</h2>
+        <input type="hidden" id="activeGroupId">
+        
+        <div class="space-y-3 mb-5">
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Nama Item</label>
+                <input type="text" id="itemNameInput" placeholder="Cth: Tiket Pesawat PP" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div class="flex gap-3">
+                <div class="flex-1">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Harga Minimum</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">Rp</span>
+                        <input type="text" inputmode="numeric" id="priceMinInput" placeholder="0" class="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Harga Maksimum</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">Rp</span>
+                        <input type="text" inputmode="numeric" id="priceMaxInput" placeholder="0" class="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex gap-2">
+            <button onclick="closeModals()" class="flex-1 bg-gray-100 text-gray-700 font-medium py-2 rounded-lg hover:bg-gray-200 transition-colors">Batal</button>
+            <button onclick="saveItem()" class="flex-1 bg-emerald-600 text-white font-medium py-2 rounded-lg hover:bg-emerald-700 transition-colors">Tambah</button>
+        </div>
+    </div>
+
+    <!-- 4. Import Data Modal -->
+    <div id="importModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-xl shadow-2xl z-50 p-6 hidden">
+        <h2 class="text-lg font-bold text-gray-800 mb-1">Import Data</h2>
+        <p class="text-xs text-gray-500 mb-4">Paste (Tempel) Kode Data panjang yang dibagikan oleh teman Anda ke kolom di bawah ini.</p>
+        <textarea id="importDataInput" rows="4" placeholder="Cth: eyJhcHBEYXRhIjpbeyJpZCI6... (Paste disini)" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-4 text-xs font-mono break-all"></textarea>
+        <div class="flex gap-2">
+            <button onclick="closeModals()" class="flex-1 bg-gray-100 text-gray-700 font-medium py-2 rounded-lg hover:bg-gray-200">Batal</button>
+            <button onclick="processImport()" class="flex-1 bg-emerald-600 text-white font-medium py-2 rounded-lg hover:bg-emerald-700">Timpah Data</button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <i class="ph-fill ph-check-circle text-emerald-400"></i> <span id="toastMsg">Tersalin!</span>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Global State (Disimpan di memori dan LocalStorage)
+        let currentUserName = localStorage.getItem('budget_username');
+        let appData = [];
+
+        // Utilities untuk mengkompres/mengenkode state menjadi string yang bisa dibagikan
+        const encodeData = (data) => btoa(encodeURIComponent(JSON.stringify(data)));
+        const decodeData = (str) => JSON.parse(decodeURIComponent(atob(str)));
+
+        // Formatter & Utilities
+        const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(angka);
+        const formatTime = (ts) => {
+            if(!ts) return '';
+            const d = new Date(ts);
+            return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+        };
+
+        // Palet Warna Pengguna 
+        const userColors = [
+            { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-400' },
+            { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-400' },
+            { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-400' },
+            { bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-400' },
+            { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-400' },
+            { bg: 'bg-pink-100', text: 'text-pink-700', border: 'border-pink-400' },
+            { bg: 'bg-indigo-100', text: 'text-indigo-700', border: 'border-indigo-400' },
+            { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-400' },
+            { bg: 'bg-teal-100', text: 'text-teal-700', border: 'border-teal-400' },
+            { bg: 'bg-cyan-100', text: 'text-cyan-700', border: 'border-cyan-400' },
+            { bg: 'bg-lime-100', text: 'text-lime-700', border: 'border-lime-400' },
+            { bg: 'bg-fuchsia-100', text: 'text-fuchsia-700', border: 'border-fuchsia-400' },
+            { bg: 'bg-rose-100', text: 'text-rose-700', border: 'border-rose-400' }
+        ];
+
+        // Hash generator untuk mengubah nama menjadi indeks warna yang konsisten
+        const getUserStyle = (username) => {
+            let hash = 0;
+            // Case-insensitive
+            const str = (username || 'Unknown').toLowerCase().trim();
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index = Math.abs(hash) % userColors.length;
+            return userColors[index];
+        };
+
+        // UI Helpers
+        window.openModal = (id) => {
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.getElementById(id).classList.remove('hidden');
+        };
+
+        window.closeModals = () => {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.querySelectorAll('div[id$="Modal"]').forEach(el => el.classList.add('hidden'));
+            // Clear inputs
+            document.getElementById('groupNameInput').value = '';
+            document.getElementById('itemNameInput').value = '';
+            document.getElementById('priceMinInput').value = '';
+            document.getElementById('priceMaxInput').value = '';
+            document.getElementById('importDataInput').value = '';
+        };
+
+        window.showToast = (msg) => {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100', 'translate-y-2');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-2');
+                toast.classList.add('opacity-0');
+            }, 3000);
+        };
+
+        window.resetName = () => {
+            localStorage.removeItem('budget_username');
+            currentUserName = null;
+            document.getElementById('userNameInput').value = '';
+            window.openModal('nameModal');
+        };
+
+        // Format Input Currency Realtime
+        const formatInputRupiah = (element) => {
+            element.addEventListener('input', function(e) {
+                let value = this.value.replace(/[^,\d]/g, '');
+                let split = value.split(',');
+                let sisa = split[0].length % 3;
+                let rupiah = split[0].substr(0, sisa);
+                let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                if (ribuan) {
+                    let separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+                this.value = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            });
+        };
+        formatInputRupiah(document.getElementById('priceMinInput'));
+        formatInputRupiah(document.getElementById('priceMaxInput'));
+
+        // Application Start
+        const initApp = () => {
+            if (!currentUserName) {
+                window.openModal('nameModal');
+                return;
+            }
+            document.getElementById('displayUserName').innerText = currentUserName;
+
+            // 1. Cek apakah ada muatan data via URL Parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataFromUrl = urlParams.get('data');
+
+            if (dataFromUrl) {
+                try {
+                    appData = decodeData(dataFromUrl);
+                    saveToLocal(); 
+                    window.showToast("Berhasil memuat data dari tautan!");
+                    
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({}, document.title, cleanUrl);
+                } catch (e) {
+                    alert("Gagal memuat data dari tautan. Link mungkin rusak atau tidak valid.");
+                }
+            } else {
+                // 2. Jika tidak ada URL parameter, muat dari LocalStorage perangkat
+                const localData = localStorage.getItem('budgetin_data_v2');
+                if(localData) {
+                    try {
+                        appData = JSON.parse(localData);
+                    } catch(e) { appData = []; }
+                }
+            }
+            
+            renderUI();
+        };
+
+        window.saveName = () => {
+            const name = document.getElementById('userNameInput').value.trim();
+            if (name.length < 2) {
+                alert('Silakan masukkan nama yang valid (minimal 2 karakter).');
+                return;
+            }
+            currentUserName = name;
+            localStorage.setItem('budget_username', name);
+            window.closeModals();
+            initApp();
+        };
+
+        // Fungsi Simpan State Lokal
+        const saveToLocal = () => {
+            localStorage.setItem('budgetin_data_v2', JSON.stringify(appData));
+        };
+
+        // Render Data to Screen
+        const renderUI = () => {
+            const container = document.getElementById('groupsContainer');
+            container.innerHTML = '';
+
+            const groups = appData.filter(d => d.type === 'group').sort((a, b) => a.timestamp - b.timestamp);
+            const items = appData.filter(d => d.type === 'item');
+
+            let totalGlobalMin = 0;
+            let totalGlobalMax = 0;
+
+            if (groups.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300">
+                        <div class="text-gray-400 text-4xl mb-2 flex justify-center"><i class="ph ph-folder-dashed"></i></div>
+                        <h3 class="text-gray-600 font-medium">Data Masih Kosong</h3>
+                        <p class="text-xs text-gray-400 mt-1 px-4">Buat kategori pertama, lalu bagikan tautannya ke rekan Anda untuk dikolaborasikan.</p>
+                    </div>`;
+            }
+
+            groups.forEach(group => {
+                const groupItems = items.filter(i => i.groupId === group.id).sort((a,b) => a.timestamp - b.timestamp);
+                
+                let groupMin = 0;
+                let groupMax = 0;
+
+                const itemsHtml = groupItems.map(item => {
+                    groupMin += item.priceMin;
+                    groupMax += item.priceMax;
+                    
+                    const uStyle = getUserStyle(item.addedBy);
+
+                    return `
+                        <div class="bg-white rounded-lg p-3 border border-gray-100 border-l-4 ${uStyle.border} flex flex-col gap-2 relative group shadow-sm transition-all hover:shadow-md">
+                            <button onclick="deleteItem('${item.id}')" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 transition-colors bg-white rounded shadow-sm w-6 h-6 flex items-center justify-center hidden group-hover:flex">
+                                <i class="ph ph-trash"></i>
+                            </button>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800 text-sm pr-6">${item.itemName}</h4>
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <div class="w-4 h-4 rounded-full ${uStyle.bg} flex items-center justify-center text-[8px] font-bold ${uStyle.text} uppercase">
+                                            ${item.addedBy.charAt(0)}
+                                        </div>
+                                        <span class="text-xs font-semibold ${uStyle.text}">${item.addedBy}</span>
+                                        <span class="text-[10px] text-gray-400 ml-1">• ${formatTime(item.timestamp)}</span>
+                                    </div>
+                                </div>
+                                <div class="text-right mt-1">
+                                    <div class="text-xs text-gray-500 font-medium whitespace-nowrap">${formatRp(item.priceMin)}</div>
+                                    <div class="text-xs text-gray-400 rotate-90 inline-block mx-1 leading-none"><i class="ph ph-arrows-down-up"></i></div>
+                                    <div class="text-xs text-emerald-600 font-bold whitespace-nowrap">${formatRp(item.priceMax)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                totalGlobalMin += groupMin;
+                totalGlobalMax += groupMax;
+
+                const groupCard = `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative group">
+                        <button onclick="deleteGroup('${group.id}')" class="absolute top-3 left-3 text-gray-300 hover:text-red-500 transition-colors hidden group-hover:block" title="Hapus Grup">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center pl-10">
+                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                                <i class="ph-fill ph-folder-open text-emerald-500 text-lg"></i> ${group.groupName}
+                            </h3>
+                            <div class="text-right text-xs">
+                                <span class="block text-gray-400">Subtotal Group</span>
+                                <span class="font-bold text-gray-600">${formatRp(groupMin)} - ${formatRp(groupMax)}</span>
+                            </div>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            ${itemsHtml}
+                            <button onclick="openItemModal('${group.id}')" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-500 hover:text-emerald-600 hover:border-emerald-300 hover:bg-emerald-50 transition-colors flex items-center justify-center gap-1">
+                                <i class="ph ph-plus-circle text-lg"></i> Tambah Item
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += groupCard;
+            });
+
+            // Update Total Footer
+            document.getElementById('totalMin').innerText = formatRp(totalGlobalMin);
+            document.getElementById('totalMax').innerText = formatRp(totalGlobalMax);
+        };
+
+        // Bagikan Data Logic
+        window.copyInviteLink = () => {
+            if(appData.length === 0) {
+                alert("Belum ada data untuk dibagikan. Buat setidaknya 1 item/grup dulu.");
+                return;
+            }
+
+            const token = encodeData(appData);
+            const urlWithData = window.location.origin + window.location.pathname + '?data=' + token;
+
+            const inviteText = `Ayo selesaikan patungan kita di Budgetin!\n\n🔹 CARA 1 (Paling Mudah):\nKlik tautan ini untuk langsung membuka seluruh data:\n${urlWithData}\n\n🔹 CARA 2 (Jika Tautan Gagal):\nSalin kode panjang di bawah ini, lalu buka aplikasi dan pilih menu IMPORT:\n\n${token}`;
+
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = inviteText;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            
+            window.showToast("Tautan & Kode Data berhasil disalin!");
+        };
+
+        window.openImportModal = () => {
+            window.openModal('importModal');
+        };
+
+        window.processImport = () => {
+            const token = document.getElementById('importDataInput').value.trim();
+            if (!token) {
+                alert("Silakan masukkan kode/teks import terlebih dahulu.");
+                return;
+            }
+
+            try {
+                let finalToken = token;
+                if (token.includes('?data=')) {
+                    finalToken = token.split('?data=')[1].split('\n')[0].trim();
+                } else if (token.includes('CARA 2')) {
+                    const lines = token.split('\n');
+                    finalToken = lines[lines.length - 1].trim();
+                }
+
+                appData = decodeData(finalToken);
+                saveToLocal();
+                renderUI();
+                window.closeModals();
+                window.showToast("Data Kolaborasi Berhasil Di-Import!");
+            } catch(e) {
+                alert("Kode data rusak atau tidak valid. Pastikan menyalinnya dengan benar.");
+            }
+        };
+
+        // Generate Laporan PDF Logic
+        window.downloadPDF = () => {
+            if(appData.length === 0) {
+                alert("Belum ada data untuk dicetak dalam laporan.");
+                return;
+            }
+            
+            window.showToast("Sedang menyiapkan dokumen PDF...");
+
+            // 1. Buat kontainer khusus untuk desain dokumen A4
+            const reportDiv = document.createElement('div');
+            // w-[800px] akan memberikan ruang yang cukup saat dirender ke canvas oleh library html2pdf
+            reportDiv.className = 'p-10 bg-white text-gray-800 w-[800px] font-sans mx-auto'; 
+            
+            // Layout Kop Surat & Judul Laporan
+            let htmlContent = `
+                <div class="border-b-4 border-emerald-600 pb-6 mb-8 flex justify-between items-end">
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-emerald-700">Laporan Budgetin</h1>
+                        <p class="text-sm text-gray-500 mt-2">Dibuat pada: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-widest">Total Estimasi Keseluruhan</p>
+                        <p class="text-2xl font-bold text-emerald-600 mt-1">${document.getElementById('totalMin').innerText} <span class="text-gray-400 text-lg mx-1">-</span> ${document.getElementById('totalMax').innerText}</p>
+                    </div>
+                </div>
+                <table class="w-full text-sm text-left mb-6 border-collapse">
+                    <thead>
+                        <tr class="bg-emerald-50 border-b-2 border-emerald-300">
+                            <th class="py-3 px-4 font-bold text-gray-700 w-2/5">Item / Kategori</th>
+                            <th class="py-3 px-4 font-bold text-gray-700 w-1/5">Ditambahkan Oleh</th>
+                            <th class="py-3 px-4 font-bold text-gray-700 text-right w-1/5">Harga Min</th>
+                            <th class="py-3 px-4 font-bold text-gray-700 text-right w-1/5">Harga Max</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            const groups = appData.filter(d => d.type === 'group').sort((a, b) => a.timestamp - b.timestamp);
+            const items = appData.filter(d => d.type === 'item');
+
+            // Susun baris Tabel berdasarkan Grup
+            groups.forEach(group => {
+                const groupItems = items.filter(i => i.groupId === group.id).sort((a,b) => a.timestamp - b.timestamp);
+                
+                let groupMin = 0;
+                let groupMax = 0;
+                
+                let itemsHtmlRow = '';
+                groupItems.forEach(item => {
+                    groupMin += item.priceMin;
+                    groupMax += item.priceMax;
+                    itemsHtmlRow += `
+                        <tr class="border-b border-gray-100">
+                            <td class="py-2 px-4 pl-10 text-gray-600 flex items-center gap-2">
+                                <span class="text-emerald-500 font-bold mr-1">-</span> ${item.itemName}
+                            </td>
+                            <td class="py-2 px-4 text-gray-600">${item.addedBy}</td>
+                            <td class="py-2 px-4 text-right text-gray-600">${formatRp(item.priceMin)}</td>
+                            <td class="py-2 px-4 text-right text-gray-600">${formatRp(item.priceMax)}</td>
+                        </tr>
+                    `;
+                });
+
+                // Baris Header Kategori (Grup)
+                htmlContent += `
+                    <tr class="bg-gray-100 border-b border-gray-300">
+                        <td class="py-3 px-4 font-bold text-gray-800 uppercase tracking-wider text-xs">
+                            ${group.groupName}
+                        </td>
+                        <td class="py-3 px-4"></td>
+                        <td class="py-3 px-4 text-right font-bold text-gray-800">${formatRp(groupMin)}</td>
+                        <td class="py-3 px-4 text-right font-bold text-gray-800">${formatRp(groupMax)}</td>
+                    </tr>
+                    ${itemsHtmlRow}
+                `;
+            });
+
+            htmlContent += `
+                    </tbody>
+                </table>
+                <div class="mt-12 text-center text-xs text-gray-400 border-t border-gray-200 pt-4">
+                    Dokumen ini di-generate secara otomatis secara offline oleh Aplikasi Budgetin.
+                </div>
+            `;
+            
+            reportDiv.innerHTML = htmlContent;
+
+            // 2. Tempelkan element div laporan ke Body (tapi disembunyikan/keluar layar)
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.left = '-9999px';
+            tempContainer.style.top = '0';
+            tempContainer.appendChild(reportDiv);
+            document.body.appendChild(tempContainer);
+
+            // 3. Konfigurasi plugin html2pdf
+            const opt = {
+                margin:       [0.5, 0, 0.5, 0], // Margin atas & bawah
+                filename:     'Laporan_Budgetin_' + new Date().getTime() + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true }, // Resolusi HD
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // 4. Proses render HTML ke PDF
+            html2pdf().set(opt).from(reportDiv).save().then(() => {
+                // Hapus lagi temp container setelah selesai diunduh
+                document.body.removeChild(tempContainer);
+                window.showToast("PDF Berhasil Diunduh!");
+            });
+        };
+
+        // CRUD Actions Memori Lokal
+        window.openGroupModal = () => {
+            window.openModal('groupModal');
+            setTimeout(() => document.getElementById('groupNameInput').focus(), 100);
+        };
+
+        window.openItemModal = (groupId) => {
+            document.getElementById('activeGroupId').value = groupId;
+            window.openModal('itemModal');
+            setTimeout(() => document.getElementById('itemNameInput').focus(), 100);
+        };
+
+        window.saveGroup = () => {
+            const name = document.getElementById('groupNameInput').value.trim();
+            if(!name) return;
+
+            appData.push({
+                id: 'grp_' + Date.now() + Math.random().toString(16).slice(2),
+                type: 'group',
+                groupName: name,
+                timestamp: Date.now()
+            });
+            
+            saveToLocal();
+            renderUI();
+            window.closeModals();
+        };
+
+        window.saveItem = () => {
+            const groupId = document.getElementById('activeGroupId').value;
+            const itemName = document.getElementById('itemNameInput').value.trim();
+            const minStrRaw = document.getElementById('priceMinInput').value;
+            const maxStrRaw = document.getElementById('priceMaxInput').value;
+
+            const minStr = minStrRaw.replace(/\./g, '');
+            const maxStr = maxStrRaw.replace(/\./g, '');
+
+            if(!itemName || !minStr || !maxStr) {
+                alert("Mohon lengkapi semua bidang.");
+                return;
+            }
+
+            let min = parseInt(minStr, 10);
+            let max = parseInt(maxStr, 10);
+
+            if (min > max) {
+                const temp = min;
+                min = max;
+                max = temp;
+            }
+
+            appData.push({
+                id: 'itm_' + Date.now() + Math.random().toString(16).slice(2),
+                type: 'item',
+                groupId: groupId,
+                itemName: itemName,
+                priceMin: min,
+                priceMax: max,
+                addedBy: currentUserName,
+                timestamp: Date.now()
+            });
+
+            saveToLocal();
+            renderUI();
+            window.closeModals();
+        };
+
+        window.deleteItem = (itemId) => {
+            if(confirm("Hapus item ini?")) {
+                appData = appData.filter(d => d.id !== itemId);
+                saveToLocal();
+                renderUI();
+            }
+        };
+
+        window.deleteGroup = (groupId) => {
+            if(confirm("Hapus kategori ini? (Semua item di dalamnya juga akan terhapus)")) {
+                appData = appData.filter(d => d.id !== groupId && d.groupId !== groupId);
+                saveToLocal();
+                renderUI();
+            }
+        };
+
+        window.clearAllData = () => {
+            if(confirm("Apakah Anda yakin ingin MENGHAPUS SEMUA DATA budget secara permanen?")) {
+                appData = [];
+                saveToLocal();
+                renderUI();
+            }
+        };
+
+        // Run
+        initApp();
+    </script>
+</body>
+</html>

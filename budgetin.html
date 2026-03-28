@@ -106,8 +106,9 @@
 
     <!-- 2. Add Group Modal -->
     <div id="groupModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-xl shadow-2xl z-50 p-6 hidden">
-        <h2 class="text-lg font-bold text-gray-800 mb-1">Buat Kategori Baru</h2>
+        <h2 id="groupModalTitle" class="text-lg font-bold text-gray-800 mb-1">Buat Kategori Baru</h2>
         <p class="text-xs text-gray-500 mb-4">Kelompokkan budget berdasarkan judul (Cth: Penginapan, Makanan)</p>
+        <input type="hidden" id="editingGroupId">
         <input type="text" id="groupNameInput" placeholder="Judul Kategori" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-4">
         <div class="flex gap-2">
             <button onclick="closeModals()" class="flex-1 bg-gray-100 text-gray-700 font-medium py-2 rounded-lg hover:bg-gray-200">Batal</button>
@@ -117,8 +118,9 @@
 
     <!-- 3. Add Item Modal -->
     <div id="itemModal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-xl shadow-2xl z-50 p-6 hidden">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">Tambah Item Budget</h2>
+        <h2 id="itemModalTitle" class="text-lg font-bold text-gray-800 mb-4">Tambah Item Budget</h2>
         <input type="hidden" id="activeGroupId">
+        <input type="hidden" id="editingItemId">
         
         <div class="space-y-3 mb-5">
             <div>
@@ -227,6 +229,8 @@
             document.getElementById('priceMinInput').value = '';
             document.getElementById('priceMaxInput').value = '';
             document.getElementById('importDataInput').value = '';
+            document.getElementById('editingGroupId').value = '';
+            document.getElementById('editingItemId').value = '';
         };
 
         window.showToast = (msg) => {
@@ -352,9 +356,14 @@
 
                     return `
                         <div class="bg-white rounded-lg p-3 border border-gray-100 border-l-4 ${uStyle.border} flex flex-col gap-2 relative group shadow-sm transition-all hover:shadow-md">
-                            <button onclick="deleteItem('${item.id}')" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 transition-colors bg-white rounded shadow-sm w-6 h-6 flex items-center justify-center hidden group-hover:flex">
-                                <i class="ph ph-trash"></i>
-                            </button>
+                            <div class="absolute top-2 right-2 flex gap-1 hidden group-hover:flex">
+                                <button onclick="editItem('${item.id}')" class="text-gray-300 hover:text-blue-500 transition-colors bg-white rounded shadow-sm w-6 h-6 flex items-center justify-center" title="Edit Item">
+                                    <i class="ph ph-pencil-simple"></i>
+                                </button>
+                                <button onclick="deleteItem('${item.id}')" class="text-gray-300 hover:text-red-500 transition-colors bg-white rounded shadow-sm w-6 h-6 flex items-center justify-center" title="Hapus Item">
+                                    <i class="ph ph-trash"></i>
+                                </button>
+                            </div>
                             <div class="flex justify-between items-start">
                                 <div>
                                     <h4 class="font-semibold text-gray-800 text-sm pr-6">${item.itemName}</h4>
@@ -381,10 +390,15 @@
 
                 const groupCard = `
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative group">
-                        <button onclick="deleteGroup('${group.id}')" class="absolute top-3 left-3 text-gray-300 hover:text-red-500 transition-colors hidden group-hover:block" title="Hapus Grup">
-                            <i class="ph ph-trash"></i>
-                        </button>
-                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center pl-10">
+                        <div class="absolute top-3 left-3 flex gap-2 hidden group-hover:flex">
+                            <button onclick="editGroup('${group.id}')" class="text-gray-300 hover:text-blue-500 transition-colors" title="Edit Grup">
+                                <i class="ph ph-pencil-simple"></i>
+                            </button>
+                            <button onclick="deleteGroup('${group.id}')" class="text-gray-300 hover:text-red-500 transition-colors" title="Hapus Grup">
+                                <i class="ph ph-trash"></i>
+                            </button>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center pl-16">
                             <h3 class="font-bold text-gray-800 flex items-center gap-2">
                                 <i class="ph-fill ph-folder-open text-emerald-500 text-lg"></i> ${group.groupName}
                             </h3>
@@ -576,26 +590,67 @@
 
         // CRUD Actions Memori Lokal
         window.openGroupModal = () => {
+            document.getElementById('groupModalTitle').innerText = 'Buat Kategori Baru';
+            document.getElementById('editingGroupId').value = '';
+            document.getElementById('groupNameInput').value = '';
+            window.openModal('groupModal');
+            setTimeout(() => document.getElementById('groupNameInput').focus(), 100);
+        };
+
+        window.editGroup = (groupId) => {
+            const group = appData.find(d => d.id === groupId);
+            if(!group) return;
+            document.getElementById('groupModalTitle').innerText = 'Edit Kategori';
+            document.getElementById('editingGroupId').value = groupId;
+            document.getElementById('groupNameInput').value = group.groupName;
             window.openModal('groupModal');
             setTimeout(() => document.getElementById('groupNameInput').focus(), 100);
         };
 
         window.openItemModal = (groupId) => {
+            document.getElementById('itemModalTitle').innerText = 'Tambah Item Budget';
             document.getElementById('activeGroupId').value = groupId;
+            document.getElementById('editingItemId').value = '';
+            document.getElementById('itemNameInput').value = '';
+            document.getElementById('priceMinInput').value = '';
+            document.getElementById('priceMaxInput').value = '';
+            window.openModal('itemModal');
+            setTimeout(() => document.getElementById('itemNameInput').focus(), 100);
+        };
+
+        window.editItem = (itemId) => {
+            const item = appData.find(d => d.id === itemId);
+            if(!item) return;
+            document.getElementById('itemModalTitle').innerText = 'Edit Item Budget';
+            document.getElementById('activeGroupId').value = item.groupId;
+            document.getElementById('editingItemId').value = item.id;
+            document.getElementById('itemNameInput').value = item.itemName;
+            document.getElementById('priceMinInput').value = item.priceMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            document.getElementById('priceMaxInput').value = item.priceMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             window.openModal('itemModal');
             setTimeout(() => document.getElementById('itemNameInput').focus(), 100);
         };
 
         window.saveGroup = () => {
             const name = document.getElementById('groupNameInput').value.trim();
+            const editId = document.getElementById('editingGroupId').value;
             if(!name) return;
 
-            appData.push({
-                id: 'grp_' + Date.now() + Math.random().toString(16).slice(2),
-                type: 'group',
-                groupName: name,
-                timestamp: Date.now()
-            });
+            if (editId) {
+                // Update mode
+                const index = appData.findIndex(d => d.id === editId);
+                if (index !== -1) {
+                    appData[index].groupName = name;
+                }
+            } else {
+                // Insert mode
+                appData.push({
+                    id: 'grp_' + Date.now() + Math.random().toString(16).slice(2),
+                    type: 'group',
+                    groupName: name,
+                    timestamp: Date.now()
+                });
+            }
             
             saveToLocal();
             renderUI();
@@ -604,6 +659,7 @@
 
         window.saveItem = () => {
             const groupId = document.getElementById('activeGroupId').value;
+            const editId = document.getElementById('editingItemId').value;
             const itemName = document.getElementById('itemNameInput').value.trim();
             const minStrRaw = document.getElementById('priceMinInput').value;
             const maxStrRaw = document.getElementById('priceMaxInput').value;
@@ -625,16 +681,27 @@
                 max = temp;
             }
 
-            appData.push({
-                id: 'itm_' + Date.now() + Math.random().toString(16).slice(2),
-                type: 'item',
-                groupId: groupId,
-                itemName: itemName,
-                priceMin: min,
-                priceMax: max,
-                addedBy: currentUserName,
-                timestamp: Date.now()
-            });
+            if (editId) {
+                // Update mode
+                const index = appData.findIndex(d => d.id === editId);
+                if (index !== -1) {
+                    appData[index].itemName = itemName;
+                    appData[index].priceMin = min;
+                    appData[index].priceMax = max;
+                }
+            } else {
+                // Insert mode
+                appData.push({
+                    id: 'itm_' + Date.now() + Math.random().toString(16).slice(2),
+                    type: 'item',
+                    groupId: groupId,
+                    itemName: itemName,
+                    priceMin: min,
+                    priceMax: max,
+                    addedBy: currentUserName,
+                    timestamp: Date.now()
+                });
+            }
 
             saveToLocal();
             renderUI();
